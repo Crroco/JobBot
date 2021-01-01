@@ -1,7 +1,7 @@
 ///bug pt jobs.json initial. Cum fac sa il iau de pe site?
 ///bug pt rearanjarea jobs.json a.i. joburile sa fie ordonate dupa tara si oras
 ///but pt nrOrd(nu merge pt mai multe persoane)
-///bug pt nrOrd atunci cand inchid si deschid botul - se modifica id ul din array dupa ce redeschid botul
+///bug pt nrOrd atunci cand inchid si deschid botul
 
 const Discord = require('discord.js');
 
@@ -197,14 +197,11 @@ class userData{
 
 ///idOrder[id] = pozitia id ului in userDataArray
 ///in userdata.json am valorile vechi ale lui userDataArray si ale lui idOrder
-const oldArray = require(`./userDataArray.json`);
-const oldId = require(`./idOrder.json`);
-let userDataArray = oldArray.userDataArray, idOrder = oldId.idOrder;
-console.log(userDataArray);
-console.log(idOrder);
+const oldArray = require(`./userdata.json`);
+let userDataArray = oldArray.userDataArray, idOrder = oldArray.idOrder;
+
 try{
-    fs.copyFileSync('./userDataArray.json', `./userDataArraycopy.json`);
-    fs.copyFileSync('./idOrder.json', `./idOrdercopy.json`);
+    fs.copyFileSync('./userdata.json', `./userdatacopy.json`);
 } catch (err){
    console.log(err);
 }
@@ -238,10 +235,10 @@ function addId(idToBeAdded){///bruta
     idOrder[`${idToBeAdded}`] = i + 1;
 }
 
-function copyInUserDataArray(){
+function copyInUserData(){
 
     try{
-        fs.writeFileSync('userDataArray.json', String.raw`{"userDataArray":[`);
+        fs.writeFileSync('userdata.json', String.raw`{"userDataArray":[`);
     } catch (err){
        console.log(err);
     }
@@ -249,70 +246,48 @@ function copyInUserDataArray(){
     let i;
     ///fac pentru 0
     try{
-        fs.appendFileSync('userDataArray.json', String.raw`{"id":${userDataArray[0].id},"searchCity":"${userDataArray[0].searchCity}","searchCountry":"${userDataArray[0].searchCountry}","searchTitle":"${userDataArray[0].searchTitle}","searchCompany":"${userDataArray[0].searchCompany}","currentJobPosition":${userDataArray[0].currentJobPosition}}`);
+        fs.appendFileSync('userdata.json', String.raw`{"id":${userDataArray[0].id},"searchCity":"${userDataArray[0].searchCity}","searchCountry":"${userDataArray[0].searchCountry}","searchTitle":"${userDataArray[0].searchTitle}","searchCompany":"${userDataArray[0].searchCompany}","currentJobPosition":${userDataArray[0].currentJobPosition}}`);
     } catch (err){
        console.log(err);
     }
 
     for(i = 1; i < userDataArray.length; ++i){
         try{
-            fs.appendFileSync('userDataArray.json', String.raw`,{"id":${userDataArray[i].id},"searchCity":"${userDataArray[i].searchCity}","searchCountry":"${userDataArray[i].searchCountry}","searchTitle":"${userDataArray[i].searchTitle}","searchCompany":"${userDataArray[i].searchCompany}","currentJobPosition":${userDataArray[i].currentJobPosition}}`);
+            fs.appendFileSync('userdata.json', String.raw`,{"id":${userDataArray[i].id},"searchCity":"${userDataArray[i].searchCity}","searchCountry":"${userDataArray[i].searchCountry}","searchTitle":"${userDataArray[i].searchTitle}","searchCompany":"${userDataArray[i].searchCompany}","currentJobPostion":${userDataArray[i].currentJobPosition}}`);
         } catch (err){
            console.log(err);
         }
     }
 
     try{
-        fs.appendFileSync('userDataArray.json', String.raw`]}`);//,"idOrder":{"${userDataArray[0].id}":0`);
-    } catch (err){
-       console.log(err);
-    }
-}
-
-function copyInIdOrder(){
-    try{
-        fs.writeFileSync('idOrder.json', String.raw`{"idOrder":{`);
+        fs.appendFileSync('userdata.json', String.raw`],"idOrder":{"${userDataArray[0].id}":0`);
     } catch (err){
        console.log(err);
     }
 
-    let i;
-    ///fac pentru 0
-    try{
-        fs.appendFileSync('idOrder.json', String.raw`"${userDataArray[0].id}":0`);
-    } catch (err){
-       console.log(err);
-    }
-
-    for(i = 1; i < userDataArray.length; ++i){
+    for(i = 1; i < idOrder.length; ++i){
         try{
-            fs.appendFileSync('idOrder.json', String.raw`,"${userDataArray[i].id}":${i}`);
+            fs.appendFileSync('userdata.json', String.raw`,"${userDataArray[i].id}":${i}`);
         } catch (err){
            console.log(err);
-        }
+        } 
     }
 
     try{
-        fs.appendFileSync('idOrder.json', String.raw`}}`);//,"idOrder":{"${userDataArray[0].id}":0`);
+        fs.appendFileSync('userdata.json', String.raw`}}`);
     } catch (err){
        console.log(err);
     }
 }
-    
-
 
 client.on('message', (message) => {
     if(message.author.bot)
         return ;
     if(!idVerification(message.author.id)){
         addId(message.author.id);
-        copyInIdOrder();
-        copyInUserDataArray();
+        copyInUserData();
     }
 
-    console.log(message.author.id);
-    console.log(idOrder);
-    console.log(userDataArray);
     if(message.content == `${prefix}help`){
         message.author.send(`${prefix}help - ajutor \n${prefix}jobs - informatii despre nr total de joburi si filtrele active de cautare \n${prefix}next - afiseaza urmatoarele 5 jobuti cu filtrele specificate`);
     }
@@ -321,8 +296,8 @@ client.on('message', (message) => {
         message.author.send(`Pentru a vedea urmatoarele 5 job uri disponibile scrieti comanda ${prefix}next.`);
     }
     else if(message.content == `${prefix}next`){
-        //console.log(userDataArray);
-        //console.log(idOrder);
+        console.log(userDataArray);
+    console.log(idOrder);
         let k = userDataArray[idOrder[message.author.id]].currentJobPosition;
         let stop = userDataArray[idOrder[message.author.id]].currentJobPosition + 5;
 
@@ -331,8 +306,8 @@ client.on('message', (message) => {
         }
 
         userDataArray[idOrder[message.author.id]].currentJobPosition = k;
-        copyInIdOrder();
-        copyInUserDataArray();
+        copyInUserData();
+       
     }
 })
 
