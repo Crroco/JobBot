@@ -14,7 +14,7 @@ let nJobs, nCity, nCountry;
 nJobs = nCity = nCountry = 1;
 --nJobs;
 async function main(comm, author = null, message = null){
-    const uri = "mongodb+srv://Crroco:pass1234@cluster0.ibtvk.mongodb.net/<JobBot>?retryWrites=true&w=majority";
+    const uri = "mongodb+srv://User:<password>@cluster0.ibtvk.mongodb.net/<db>?retryWrites=true&w=majority";
  
 
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
